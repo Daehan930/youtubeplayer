@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@mixin mQ($px) {
+  @media screen and (max-width:$px) {
+    @content;
+  }
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url("https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80")no-repeat 50% 50%/cover;
+  min-height: 100vh;
+  position: relative;
+
+
+  &:before {
+    width: 100%;
+    min-height: inherit;
+    background: #ffffff40;
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+  }
+
+  .glass {
+    position: relative;
+    width: 93%;
+    padding: 2.5em 3.2em;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    height: auto;
+    margin: 2em;
+
+
+    .box {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+
+      &__1 {
+        position: absolute;
+        top: 25%;
+        right: 16%;
+        transform: translate(-16%, -25%);
+      }
+
+      &__2 {
+        position: absolute;
+        bottom: 15%;
+        right: 6%;
+        transform: translate(-6%, -15%);
+      }
+    }
+  }
+
+
+
+  .header-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-rows: minmax(200px, 1fr);
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 5px 5px 12px rgb(0 0 0 / 35%);
+    }
+  }
+
+}
+
+.channel-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+
+  .channel-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+  }
+
+  .channel-name {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-right: 20px;
+  }
+
+  .channel-description {
+    font-size: 1rem;
+  }
+}
