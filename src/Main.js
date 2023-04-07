@@ -6,21 +6,17 @@ import ColorThief from "colorthief";
 
 
 function Main() {
-  const initialChannelData = {
-    name: "채널 이름",
-    logo: "로고 이미지",
-    description: "채널 소개",
-    subscriberCount: 0,
-    videoCount: 0,
-    viewCount: 0,
-  };
-  // 초기 채널 데이터 
 
+  const DEFAULT_CHANNEL_ID = "UCOmHUn--16B90oW2L6FRR3A";
+  // 기본 채널 ID
 
   const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
   // API 키
+  
+  const initialChannelData = null;
+  // 초기 채널 데이터    
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(DEFAULT_CHANNEL_ID);
   // 검색어
 
   const [channelData, setChannelData] = useState(initialChannelData);
@@ -75,32 +71,43 @@ function Main() {
   };
   // 애니메이션 설정
 
+  useEffect(() => {
+    if (!searchTerm) {
+      setSearchTerm(DEFAULT_CHANNEL_ID);
+    }
+  }, []);
+ 
 
   useEffect(() => {
-    if (searchTerm === "") return;
-
+    if (!searchTerm) return;
+    
     const fetchResults = async () => {
       try {
-        console.log("Searching:", searchTerm);
-        const searchResponse = await fetch(
-          `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=channel&q=${searchTerm}&key=${API_KEY}`
-        ); 
-        // 채널 검색
-
-        const searchResult = await searchResponse.json();
-        // 검색 결과
-
-        if (searchResult.items.length === 0) {
-          setChannelData(initialChannelData);
-          setPlaylistsData([]);
-          return;
+        let channelId;
+        if (searchTerm === "") {
+          channelId = DEFAULT_CHANNEL_ID;
+        } else {
+          console.log("Searching:", searchTerm);
+          const searchResponse = await fetch(
+            `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=channel&q=${searchTerm}&key=${API_KEY}`
+          );
+          // 채널 검색 요청
+    
+          const searchResult = await searchResponse.json();
+          // 검색 결과
+    
+          if (searchResult.items.length === 0) {
+            setChannelData(initialChannelData);
+            setPlaylistsData([]);
+            return;
+          }
+    
+          channelId = searchResult.items[0].snippet.channelId;
         }
-        // 검색 결과가 없으면 초기화
-
-        const channelId = searchResult.items[0].snippet.channelId;
-        const channelResult = await fetchChannelData(channelId);
-        // 채널 데이터 요청
         
+          const channelResult = await fetchChannelData(channelId);
+          // 채널 데이터 요청
+          
         setChannelData({
           name: channelResult.items[0].snippet.title,
           logo: channelResult.items[0].snippet.thumbnails.high.url,
@@ -136,9 +143,40 @@ function Main() {
   }, [searchTerm]);
 
   const handleSearch = (event) => {
-    event.preventDefault(); // 기본 동작 중단
-    setSearchTerm(event.target.search.value);
+    event.preventDefault();
+    if (event.target.search.value === "") {
+      setSearchTerm(DEFAULT_CHANNEL_ID);
+    } else {
+      setSearchTerm(event.target.search.value);
+    }
   };
+
+  const handleRandomChannel = async () => {
+    // 랜덤한 검색어 생성 (예: 한글 글자)
+    const randomSearchTerm = String.fromCharCode(
+      0xAC00 + Math.floor(Math.random() * (0xD7AF - 0xAC00 + 1))
+    );
+  
+    // 랜덤한 검색어로 채널 검색
+    const searchResponse = await fetch(
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=channel&q=${randomSearchTerm}&regionCode=KR&key=${API_KEY}`
+    );
+    const searchResult = await searchResponse.json();
+  
+    // 검색 결과가 없으면 다시 시도
+    if (searchResult.items.length === 0) {
+      handleRandomChannel();
+      return;
+    }
+  
+    // 검색 결과 중 랜덤한 채널 선택
+    const randomChannelIndex = Math.floor(Math.random() * searchResult.items.length);
+    const channelId = searchResult.items[randomChannelIndex].snippet.channelId;
+  
+    // 선택한 채널 정보 가져오기
+    setSearchTerm(channelId);
+  };
+
 
   const handleSlide = (direction) => {
     if (direction === -1 && offset > 0) {
@@ -150,6 +188,7 @@ function Main() {
 
   return (
     <div className="App">
+      {channelData ? (
       <header>
         <div className="glass">
 
@@ -159,7 +198,7 @@ function Main() {
               <button type="submit">검색</button>
             </div>
           </form>
-
+          <button onClick={handleRandomChannel}>랜덤 채널</button>
           <h1 className="channel-name">{channelData.name}</h1>
 
           <div className="channel-info">
@@ -217,7 +256,7 @@ function Main() {
                 {console.log(playlistsData, "재생목록ㅇ")}
               </AnimatePresence>
             ) : (
-              <p>검색 결과가 없습니다.</p>
+              <p>재생 목록이 없습니다.</p>
             )}
           </div>
 
@@ -226,6 +265,7 @@ function Main() {
           </button>
         </div>
       </header>
+      ) : null}
     </div>
   );
 }

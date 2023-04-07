@@ -6,9 +6,12 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // 사용시 콘솔창에 여러번 렌더링되는 것을 확인할 수 있음
+  // api 요청이 여러번 발생하는 것을 확인할 수 있음
+  
+  // <React.StrictMode> 
     <App />
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
